@@ -1,9 +1,10 @@
 import { Schema, model, type InferSchemaType } from "mongoose";
-import z from "zod";
+import { z } from "zod";
+import { categoryModel } from "./categoryModel.js";
 
 export const ZUserSchema = z.object({
     username: z.string().min(3, "name should be greater then length 3").max(25, "name should be less then length 25"),
-    email: z.string().email("Not valid email address"),
+    email: z.email("Not valid email address"),
     password: z.string().min(6, "password should be greater then length 6")
 })
 export const ZUserSinginSchema = ZUserSchema.pick({

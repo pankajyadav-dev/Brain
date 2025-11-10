@@ -9,4 +9,4 @@ userRouter.get("/test", (req: Request, res: Response): void => {
 
 userRouter.post("/signup", userSignup);
 userRouter.post("/signin", userSignin);
-userRouter.delete("/delete", authMiddleware, deleteUser);
+userRouter.delete("/delete", authMiddleware, deleteUser);8

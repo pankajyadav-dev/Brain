@@ -6,7 +6,7 @@ import { categoryModel, type ZCategory, ZcategorySchema } from "../model/categor
 //userData comes from middleware authmiddleware
 export const createCategory = async (req: Request<{}, {}, ZCategory> & { userData?: ZJwtPayload }, res: Response<IResponse>): Promise<void> => {
     try {
-        if (!req.userData ) {
+        if (!req.userData) {
             res.status(404).json({
                 message: "Invalid User"
             });
@@ -26,7 +26,7 @@ export const createCategory = async (req: Request<{}, {}, ZCategory> & { userDat
             });
             return;
         }
-        await categoryModel.create(parseRequest);
+        await categoryModel.create(parseRequest.data);
         res.status(202).json({
             message: "category created successfully"
         })

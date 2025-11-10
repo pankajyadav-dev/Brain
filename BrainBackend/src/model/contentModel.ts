@@ -14,7 +14,7 @@ export const ZContenSchema = z.object({
     link: z.url(),
     title: z.string().min(1, "title is required").max(100, "title should be less than length 100"),
     description: z.string().min(1, "description is required").max(300, "description length should be less than 300"),
-    user: ZObjectId,
+    category: ZObjectId,
     tags: z.array(z.string()).nonempty("add atleast the one tag in the content")
 })
 export type ZContent = z.infer<typeof ZContenSchema>;
@@ -49,6 +49,6 @@ const contentSchema = new Schema({
 }, {
     timestamps: true
 });
-
+contentSchema.index({ tags: 1 });
 export type IContent = InferSchemaType<typeof contentSchema>;
 export const contentModel = model<IContent>("Contents", contentSchema);
