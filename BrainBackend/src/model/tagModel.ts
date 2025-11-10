@@ -1,4 +1,4 @@
-import { Model, Schema, model, type InferSchemaType } from 'mongoose';
+import { Schema, model, type InferSchemaType } from 'mongoose';
 import { z } from 'zod';
 
 export const ZTagSchema = z.object({
@@ -16,5 +16,4 @@ const tagSchema = new Schema({
     timestamps: true
 })
 export type ITag = InferSchemaType<typeof tagSchema>;
-export type typeTagModel = Model<ITag>;
-export const tagModel: typeTagModel = model<ITag>("tag", tagSchema);
+export const tagModel = model<ITag>("Tags", tagSchema);

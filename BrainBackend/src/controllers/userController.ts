@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import { userModel, ZUserSchema, type ZIUser, type ZIUserSingin, ZUserSinginSchema, type IUser } from "../model/userModel.js";
-import type { IResponse } from "../index.js";
+import { ZuserParamsSchema, type IResponse, type ZUserParams } from "../index.js";
 import { generateToken, ZJwtPayloadSchema, type ZJwtPayload } from "../config/jwt.js";
-import { contentModel, ZContenSchema, type ZContent } from "../model/contentModel.js";
-import { verifyTag } from "./tagController.js";
 import argon2 from "argon2";
+import { contentModel } from "../model/contentModel.js";
+
 export const userSignup = async (req: Request<{}, {}, ZIUser>, res: Response<IResponse>): Promise<void> => {
     try {
         const result = ZUserSchema.safeParse(req.body);
@@ -59,7 +59,9 @@ export const userSignin = async (req: Request<{}, {}, ZIUserSingin>, res: Respon
                 username: userData.username
             });
             if (!tokenpayload.success) {
-                res.status(500).json({ message: "server failed to generate token" });
+                res.status(500).json({
+                    message: "server failed to generate token"
+                });
                 return;
             }
             const NewToken = generateToken(tokenpayload.data);
@@ -87,36 +89,41 @@ export const userSignin = async (req: Request<{}, {}, ZIUserSingin>, res: Respon
     }
 }
 
-
-export const createContent = async (req: Request<{}, {}, ZContent> & { userData?: ZJwtPayload }, res: Response<IResponse>): Promise<void> => {
+export const deleteUser = async (req: Request & { userData?: ZJwtPayload }, res: Response<IResponse>): Promise<void> => {
     try {
-        if (!req.userData) {
+        const userid = ZJwtPayloadSchema.safeParse(req.userData);
+        if (!userid.success) {
+            const parseError = userid.error.issues.map((err) => ({
+                field: err.path.join('.'),
+                message: err.message,
+            }))
+
             res.status(401).json({
-                message: " Invalid user",
-            })
-            return;
-        }
-        req.body.user = req.userData._id;
-        const parsedContent = ZContenSchema.safeParse(req.body);
-        if (!parsedContent.success) {
-            const formattederror = parsedContent.error.issues.map((err) => ({
-                field: err.path.join("."),
-                message: err.message
-            }));
-            res.status(411).json({
-                message: "Invalid input for content creation",
-                error: formattederror
+                message: "Invalid user",
+                error: parseError
             });
             return;
         }
-        await verifyTag(parsedContent.data.tags.map(tag => ({ tagname: tag })));
-        await contentModel.create(parsedContent.data);
-        res.status(200).json({ message: "content created successfully" });
+        const deletestatus = await userModel.findByIdAndDelete(userid.data._id);
+        if (!deletestatus) {
+            res.status(411).json({
+                message: "user doesnot exist",
+            })
+            return;
+        }
+        await contentModel.deleteMany({ user: userid.data._id });
+        res.status(200).json({
+            message: " user deleted successfully",
+        })
     } catch (err) {
         if (err instanceof Error) {
-            res.status(403).json({ message: `error in creating content ${err}` });
+            res.status(403).json({
+                message: `Invalid user error ${err}`,
+            })
         } else {
-            res.status(500).json({ message: `unknow error occur in creating content ${err}` });
+            res.status(500).json({
+                message: ` error in server ${err}`,
+            })
         }
     }
-} 
+}

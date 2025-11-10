@@ -1,4 +1,4 @@
-import { Schema, model, Model, type InferSchemaType } from "mongoose";
+import { Schema, model, type InferSchemaType } from "mongoose";
 import z from "zod";
 
 export const ZUserSchema = z.object({
@@ -29,5 +29,4 @@ const userSchema = new Schema({
 }, { timestamps: true });
 
 export type IUser = InferSchemaType<typeof userSchema>;
-export type typeUserModel = Model<IUser>;
-export const userModel: typeUserModel = model<IUser>("users", userSchema);
+export const userModel = model<IUser>("Users", userSchema);

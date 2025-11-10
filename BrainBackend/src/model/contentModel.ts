@@ -1,4 +1,4 @@
-import mongoose, { Model, Schema, model, type InferSchemaType } from 'mongoose';
+import mongoose, { Schema, model, type InferSchemaType } from 'mongoose';
 import { z } from 'zod';
 
 export enum typeEnum {
@@ -37,9 +37,9 @@ const contentSchema = new Schema({
         type: String,
         required: true
     },
-    user: {
+    category: {
         type: Schema.Types.ObjectId,
-        ref: "users",
+        ref: "Categories",
         required: true
     },
     tags: {
@@ -51,5 +51,4 @@ const contentSchema = new Schema({
 });
 
 export type IContent = InferSchemaType<typeof contentSchema>;
-export type typeContentModel = Model<IContent>;
-export const contentModel: typeContentModel = model<IContent>("Content", contentSchema);
+export const contentModel = model<IContent>("Contents", contentSchema);
