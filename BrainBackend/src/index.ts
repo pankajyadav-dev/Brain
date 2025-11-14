@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 import { userRouter } from './router/userRouter.js';
 import { contentRouter } from './router/contentRouter.js';
 import { ConnectDB } from './config/mongo.js';
@@ -18,6 +19,17 @@ export const ZuserParamsSchema = z.object({
   id: z.string().min(1, "user id is required").max(24, "invalid user id param")
 });
 export type ZUserParams = z.infer<typeof ZuserParamsSchema>
+
+export const ZodValidationError = (error: z.ZodError): {
+  field: string,
+  message: string,
+}[] => {
+  return error.issues.map((err) => ({
+    field: err.path.join('.'),
+    message: err.message
+  }));
+}
+app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 app.use("/api/user", userRouter);

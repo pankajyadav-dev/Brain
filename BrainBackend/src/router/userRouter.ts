@@ -1,5 +1,5 @@
 import Router, { type Request, type Response } from 'express';
-import { deleteUser, userSignin, userSignup } from '../controllers/userController.js';
+import { deleteUser, updateUser, userSignin, userSignup } from '../controllers/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 export const userRouter = Router();
 
@@ -9,4 +9,5 @@ userRouter.get("/test", (req: Request, res: Response): void => {
 
 userRouter.post("/signup", userSignup);
 userRouter.post("/signin", userSignin);
-userRouter.delete("/delete", authMiddleware, deleteUser);8
+userRouter.delete("/delete", authMiddleware, deleteUser);
+userRouter.patch("/update", authMiddleware, updateUser);

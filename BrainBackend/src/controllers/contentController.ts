@@ -45,8 +45,6 @@ export const createContent = async (req: Request<ZCategoryParams, {}, ZContent>,
         }
     }
 }
-
-
 export const getContent = async (req: Request<ZCategoryParams, {}, {}>, res: Response<{ data?: ZcontentResponce[] } | IResponse>): Promise<void> => {
     try {
         if (!req.params.categoryId) {
@@ -79,7 +77,6 @@ export const getContent = async (req: Request<ZCategoryParams, {}, {}>, res: Res
         }
     }
 }
-
 export const deleteContent = async (req: Request<ZCategoryParams & { contentId: z.infer<typeof ZObjectId> }, {}, {}>, res: Response<IResponse>): Promise<void> => {
     try {
         if (!req.params.categoryId || !req.params.contentId) {
@@ -91,7 +88,7 @@ export const deleteContent = async (req: Request<ZCategoryParams & { contentId: 
         const deleteStatus = await contentModel.findOneAndDelete({ _id: req.params.contentId, category: req.params.categoryId });
         if (!deleteStatus) {
             res.status(403).json({
-                message: "Invalid Content excess"
+                message: "No content exist invlaid access"
             });
             return;
         }
@@ -110,7 +107,6 @@ export const deleteContent = async (req: Request<ZCategoryParams & { contentId: 
         }
     }
 }
-
 export const updateContent = async (req: Request<ZCategoryParams & { contentId: z.infer<typeof ZObjectId> }, {}, ZContentPartial>, res: Response<IResponse>): Promise<void> => {
     try {
         if (!req.params.categoryId || !req.params.contentId) {
@@ -126,7 +122,10 @@ export const updateContent = async (req: Request<ZCategoryParams & { contentId: 
             });
             return;
         }
-        const updateStatus = await contentModel.findOneAndUpdate({ _id: req.params.contentId, category: req.params.categoryId }, { $set: parsedUpdate.data }, { new: true, runValidators: true }).lean<ZContent | null>();
+        const updateStatus = await contentModel.findOneAndUpdate(
+            { _id: req.params.contentId, category: req.params.categoryId },
+            { $set: parsedUpdate.data }, { new: true, runValidators: true }
+        ).lean<ZContent | null>();
         if (!updateStatus) {
             res.status(411).json({
                 message: "error in the content updation"

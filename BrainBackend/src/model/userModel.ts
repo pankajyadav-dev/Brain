@@ -7,10 +7,12 @@ export const ZUserSchema = z.object({
     email: z.email("Not valid email address"),
     password: z.string().min(6, "password should be greater then length 6")
 })
+export const ZUpdateUserSchema = ZUserSchema.partial();
 export const ZUserSinginSchema = ZUserSchema.pick({
     email: true,
     password: true
 })
+export type ZIUpdateUser = z.infer<typeof ZUpdateUserSchema>;
 export type ZIUser = z.infer<typeof ZUserSchema>;
 export type ZIUserSingin = z.infer<typeof ZUserSinginSchema>;
 const userSchema = new Schema({
